@@ -1053,16 +1053,21 @@ async function submitLead() {
       })
     });
 
-    if (res.ok) {
+    const data = await res.json();
+    console.log('beehiiv response:', res.status, data);
+
+    if (res.status === 200 || res.status === 201) {
       btn.textContent = '✓ Check your inbox!';
       btn.style.opacity = '0.7';
     } else {
-      throw new Error('Bad response');
+      console.error('beehiiv error:', data);
+      throw new Error(data?.message || 'Subscription failed');
     }
   } catch (e) {
+    console.error('Submit error:', e);
     btn.textContent = 'Send me the Solo Founder OS Starter Kit →';
     btn.disabled = false;
-    alert('Something went wrong — please try again.');
+    alert('Something went wrong: ' + e.message);
   }
 }
 
@@ -1082,8 +1087,11 @@ function shareToLinkedIn() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const post = `Just found out I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-minute solo founder quiz and honestly… accurate. What type are you? 👇\n\n${window.location.href}`;
-  window.open(`https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(post)}`, '_blank');
+  const url = window.location.href.split('?')[0];
+  const post = `Just found out I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-minute solo founder quiz and honestly… accurate. What type are you? 👇\n\n${url}`;
+  const liUrl = 'https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(post);
+  const w = window.open(liUrl, 'linkedin-share', 'width=600,height=600,noopener');
+  if (!w) window.location.href = liUrl;
 }
 
 function retake() {
