@@ -273,10 +273,10 @@
   }
 
   .result-cat {
-    width: 180px;
-    height: 180px;
-    margin: 0 auto 20px;
-    border-radius: 24px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 24px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,17 +298,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     font-size: 13px;
     font-family: 'DM Sans', sans-serif;
     color: var(--text-hint);
     font-weight: 400;
-    border-radius: 24px;
+    border-radius: 20px;
     border: 1.5px dashed var(--border-strong);
   }
 
   .result-cat .cat-placeholder .placeholder-icon {
-    font-size: 32px;
+    font-size: 40px;
   }
 
   .result-type-label {
@@ -491,16 +491,32 @@
   .lead-input:focus { border-color: rgba(255,255,255,0.5); }
 
   .secondary-flavor {
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 10px;
+    padding: 14px 18px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     margin-bottom: 16px;
     font-size: 14px;
     color: var(--text-muted);
+    background: var(--surface);
+    transition: border-color 0.18s, background 0.18s;
+    user-select: none;
   }
+
+  .secondary-flavor:hover { border-color: var(--border-strong); background: #F9F9F6; }
+
+  .secondary-flavor .chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-hint);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+
+  .secondary-flavor.open .chevron { transform: rotate(180deg); }
 
   .flavor-badge {
     font-family: 'Syne', sans-serif;
@@ -512,6 +528,58 @@
     text-transform: uppercase;
     border: 1px solid;
     white-space: nowrap;
+  }
+
+  .secondary-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 20px 18px 22px;
+    margin-top: -16px;
+    margin-bottom: 16px;
+  }
+
+  .secondary-panel.open { display: block; animation: slideIn 0.25s ease; }
+
+  .secondary-panel-inner {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .secondary-panel-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .secondary-panel-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .secondary-panel-text {}
+
+  .secondary-panel-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .secondary-panel-tagline {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-muted);
   }
 
   .share-row {
@@ -562,6 +630,8 @@
     .hero { padding: 48px 20px 44px; }
   }
 </style>
+<script type="text/javascript" async src="https://subscribe-forms.beehiiv.com/attribution.js"></script>
+<script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
 </head>
 <body>
 
@@ -611,11 +681,20 @@
       <div class="result-tagline" id="result-tagline"></div>
     </div>
 
-    <div id="secondary-flavor-wrap" class="secondary-flavor section-hidden">
+    <div id="secondary-flavor-wrap" class="secondary-flavor section-hidden" onclick="toggleSecondary()">
       <span>Also with</span>
       <span class="flavor-badge" id="secondary-badge"></span>
-      <span id="secondary-text"></span>
       <span>tendencies</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div id="secondary-panel" class="secondary-panel">
+      <div class="secondary-panel-inner">
+        <div class="secondary-panel-img" id="secondary-panel-img"></div>
+        <div class="secondary-panel-text">
+          <div class="secondary-panel-name" id="secondary-panel-name"></div>
+          <div class="secondary-panel-tagline" id="secondary-panel-tagline"></div>
+        </div>
+      </div>
     </div>
 
     <div class="result-card">
@@ -638,7 +717,7 @@
             <input class="lead-input" type="email" id="lead-email" placeholder="Your email address" />
           </div>
           <button class="cta-btn" onclick="submitLead()">Send me the Solo Founder OS Starter Kit →</button>
-          <p>No spam. Just your personalized starter kit + an invite to the DFY offer.</p>
+          <p>No spam. Just your starter kit.</p>
         </div>
       </div>
     </div>
@@ -685,7 +764,7 @@ const questions = [
   {
     text: "Your Notion / Google Drive / Desktop situation is best described as…",
     options: [
-      { text: "Beautiful chaos with 47 open tabs", type: "C" },
+      { text: "Beautiful chaos with 52 open tabs", type: "C" },
       { text: "Full of vision boards and half-built systems", type: "V" },
       { text: "A graveyard of 'I'll organize this later' folders", type: "R" },
       { text: "Clean, color-coded, and actually useful", type: "S" }
@@ -736,14 +815,21 @@ const archetypes = {
     imgAlt: "Chaos Coordinator character",
     color: "#FF6B35",
     colorLight: "#FFF0EB",
-    tagline: "You're wearing 47 hats and thriving on adrenaline… until you're not. Your business runs on vibes and Notion tabs.",
-    tip: "Try the <strong>One-Page OS Reset</strong> — every Sunday, write down your 3 non-negotiable priorities for the week. Not 25. Three. Pin it somewhere visible. Then before you start any new fire drill, ask: does this move one of those 3 forward?",
+    tagline: "You're wearing 52 hats and thriving on adrenaline… until you're not. Your business runs on vibes and Notion tabs.",
+    tip: `<p style="margin-bottom:14px">Here's the real problem: you don't have a productivity problem. You have a <strong>capture problem</strong>. Everything lives in your head, so your brain never stops running in the background — which is why you feel exhausted before you've done anything.</p>
+<p style="margin-bottom:14px">The fix is a <strong>Daily Triage Ritual</strong> — takes 10 minutes, runs your whole day:</p>
+<ol style="padding-left:20px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px">
+  <li><strong>Brain dump</strong> — spend 3 minutes writing every open loop in your head into one list. Don't organize yet. Just get it out.</li>
+  <li><strong>Tag each item</strong> as: Do Today / Do Later / Drop / 2-min-do-it-now. If something takes under 2 minutes, do it immediately and cross it off.</li>
+  <li><strong>Pick your 3</strong> — three tasks that, if completed, make today a win. Write them at the top of your page. Everything else is bonus.</li>
+</ol>
+<p style="color: var(--text-muted)">The goal isn't to finish everything. It's to stop treating everything as equally urgent — because it isn't.</p>`,
     wins: [
-      { label: "The 2-minute triage rule", desc: "When something lands in your inbox, immediately label it: Do now / Do later / Delegate / Delete. Stop letting everything feel equally urgent." },
-      { label: "One Notion page for everything", desc: "Create a single 'Daily HQ' page. Morning brain dump lives here. End-of-day done list lives here. No more hunting across 47 tabs." },
-      { label: "The 'Not Today' list", desc: "Keep a running doc of good ideas you're NOT doing this week. It frees up mental RAM instantly." }
+      { label: "Build your '52 tabs to 1' Notion page", desc: "Create a single page called 'Daily HQ'. Every morning, your brain dump goes here. Your 3 priorities go here. Your done list goes here. One place. No hunting." },
+      { label: "The 'Not Today' parking lot", desc: "Every new idea or task that isn't in your top 3 gets dropped into a separate doc called Not Today. Review it Friday. Most of it won't matter by then — and that's the point." },
+      { label: "End your day with a 2-sentence close", desc: "Before you close your laptop, write: 'Today I finished: ___. Tomorrow I start with: ___.' This stops tomorrow's anxiety from bleeding into tonight." }
     ],
-    cta: "Imagine handing the chaos to a done-for-you system — so you can focus on the work you actually love."
+    cta: "Your starter kit has everything you need to stop the daily fire drills and build a business that doesn't depend on your adrenaline."
   },
   V: {
     name: "The Visionary Wanderer",
@@ -752,13 +838,20 @@ const archetypes = {
     color: "#7B5CF0",
     colorLight: "#F0EEFF",
     tagline: "Big ideas, shiny objects, genius-level creativity… but follow-through and operations? Mostly optional.",
-    tip: "Before chasing any new idea, run it through your <strong>Idea-to-Execution Filter</strong>: (1) Does this make me money in the next 30 days? (2) Does this serve my existing audience? (3) Can I test it in under 5 hours? If it fails 2 of 3, park it.",
+    tip: `<p style="margin-bottom:14px">Your ideas aren't the problem — your filter is. Right now every new idea feels equally exciting, so you chase all of them and finish none of them. The fix isn't discipline. It's a decision framework you run before you let any idea take up space.</p>
+<p style="margin-bottom:14px">Use the <strong>3-Question Idea Filter</strong> before acting on anything new:</p>
+<ol style="padding-left:20px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px">
+  <li><strong>Does this make me money in the next 30 days?</strong> If no — it goes in the parking lot, not the calendar.</li>
+  <li><strong>Can I test the core of this in under 5 hours?</strong> If it needs a month of setup before you know if it works, it's not ready yet.</li>
+  <li><strong>Does this serve the people already in my world?</strong> New audiences before you've nailed the current one is how you end up with 6 offers and 0 clients.</li>
+</ol>
+<p style="color: var(--text-muted)">If an idea passes all 3, you have permission to move on it. If not, write it in your idea parking lot and revisit in 30 days. Most ideas look different after a month.</p>`,
     wins: [
-      { label: "The one-offer rule (for now)", desc: "Pick your single best offer and commit to it for 30 days. No new ideas until you've gotten 3 clients or proven it doesn't work." },
-      { label: "Weekly idea parking lot", desc: "Keep one doc just for ideas. Write them down, set a bi-weekly review date. Scratch the itch without derailing your week." },
-      { label: "Find an accountability anchor", desc: "One person who asks you every Friday: 'What did you finish this week?' Accountability to another human beats any app." }
+      { label: "One offer, 30 days, no exceptions", desc: "Pick your single best offer and commit to it for 30 days. No pivots, no new ideas acted on. Track your outreach, conversations, and conversion. Data first, then iterate." },
+      { label: "The idea parking lot (with a review date)", desc: "Keep one doc for ideas only. Every entry gets a 'revisit on' date 30 days out. The good ideas survive the wait. The shiny ones fade — which saves you from building things no one needs." },
+      { label: "Find your execution anchor", desc: "One person who asks you every Friday: 'What did you ship this week?' Not what you started. Not what you planned. What you finished. Accountability to another human beats every app." }
     ],
-    cta: "Lock your vision into a repeatable OS without losing the magic — a done-for-you system that thinks like you."
+    cta: "Your starter kit will help you lock your best idea into a repeatable process — without killing the creative spark that makes your work worth doing."
   },
   R: {
     name: "The Reluctant Operator",
@@ -767,13 +860,20 @@ const archetypes = {
     color: "#2AB07A",
     colorLight: "#E8FFF5",
     tagline: "You started the business to escape the 9-5… now you're accidentally running a job with worse hours.",
-    tip: "Do a <strong>Freedom Audit</strong> this week: track every task you do for 3 days. Then label each one: Owner (only you can do this) or Employee (could be systematized or handed off). If less than 50% is Owner work, that's your bottleneck.",
+    tip: `<p style="margin-bottom:14px">You're not stuck because you're lazy or bad at business. You're stuck because you built a <strong>job</strong> when you were trying to build a <strong>business</strong>. The difference is simple: a job needs you. A business runs with you, not only because of you.</p>
+<p style="margin-bottom:14px">Start with a <strong>Freedom Audit</strong> — takes 20 minutes and is genuinely eye-opening:</p>
+<ol style="padding-left:20px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px">
+  <li><strong>List every task you did last week</strong> — be honest, include the small stuff.</li>
+  <li><strong>Label each one</strong>: Owner work (requires your expertise, judgment, or relationships) vs. Operator work (repeatable, learnable, could be templated or handed off).</li>
+  <li><strong>Count the ratio.</strong> If less than 40% of your time is Owner work, you've identified the problem. Those Operator tasks are your first automation targets.</li>
+</ol>
+<p style="color: var(--text-muted)">You don't need to hire anyone. You need to stop being the manual version of a system that could run itself.</p>`,
     wins: [
-      { label: "Find your 3 most-repeated tasks", desc: "What do you do every week without fail? Those 3 things need a template or a system. Build it once, use it forever." },
-      { label: "Ruthlessly cut client access", desc: "No same-day replies. Batch your email to twice a day. Your nervous system will thank you and clients will adjust." },
-      { label: "Define your 'CEO hours'", desc: "Block 2 hours a week that are ONLY for working ON the business, not in it. Treat it like a client meeting you can't cancel." }
+      { label: "Template your 3 most-repeated tasks this week", desc: "What do you do every week without thinking? Write it out once as a step-by-step template. Even a rough Notion doc cuts the time in half and makes it eventually hand-off-able." },
+      { label: "Set communication office hours", desc: "No same-day email replies. Batch responses to twice a day — say 11am and 4pm. Tell clients upfront. 99% will adjust. The ones who don't are a different problem to solve." },
+      { label: "Block 2 CEO hours per week — non-negotiable", desc: "Time working ON the business, not in it. Use it for: reviewing what's draining you, building one new template, or mapping what you'd eliminate if you had to work 20% less." }
     ],
-    cta: "Turn your solo business into a true asset that runs smoother — without you grinding through every task yourself."
+    cta: "Your starter kit includes the core frameworks to start reclaiming your time — so you can work like a business owner, not a busy employee."
   },
   S: {
     name: "The Systems Savant",
@@ -782,13 +882,20 @@ const archetypes = {
     color: "#F59E0B",
     colorLight: "#FFFBEB",
     tagline: "You've got some processes, but scaling feels clunky and you're still the bottleneck at every critical step.",
-    tip: "Run the <strong>Leverage Checklist</strong>: for each part of your business, ask — is this automated, templated, or delegatable? If the answer to all three is 'no', it's a scaling blocker. Pick the one with the highest frequency and fix it this week.",
+    tip: `<p style="margin-bottom:14px">You're closer than you think — but there's a specific trap Systems Savants fall into: building systems <em>around</em> yourself instead of <em>without</em> yourself. Your processes are good. The question is: could someone else run them?</p>
+<p style="margin-bottom:14px">Run the <strong>Bottleneck Audit</strong> on your current workflow:</p>
+<ol style="padding-left:20px; display:flex; flex-direction:column; gap:8px; margin-bottom:14px">
+  <li><strong>List every recurring task or process</strong> you touch weekly.</li>
+  <li><strong>For each one, ask three things:</strong> Is it documented? Is it automated where possible? Could someone follow it without asking you a question?</li>
+  <li><strong>Any task that fails two of three</strong> is a bottleneck. Rank them by frequency × friction. The top one is your this-week project.</li>
+</ol>
+<p style="color: var(--text-muted)">The goal isn't more systems — it's systems that work without you as the glue. That's the shift from operator to owner.</p>`,
     wins: [
-      { label: "Audit your automations", desc: "List every automation you have. Then list every repetitive task that isn't automated yet. The gap is your next 10 hours of reclaimed time." },
-      { label: "Build your 'CEO dashboard'", desc: "3-5 metrics you check weekly. Revenue, leads in pipeline, tasks completed vs. planned. Visibility = control." },
-      { label: "Define your 'CEO exit criteria'", desc: "What needs to be true before you step back from a process? Document it. That's your delegation roadmap." }
+      { label: "Map your 'still manual' list", desc: "Write down every task you do repeatedly that isn't yet automated or templated. Then pick the one you do most often. That's your highest-leverage first fix — not the most complex one." },
+      { label: "Build your weekly CEO dashboard", desc: "3–5 numbers you check every Monday: revenue in, leads in pipeline, client health, tasks shipped vs. planned. If you can't see the business clearly in 5 minutes, you can't lead it clearly either." },
+      { label: "Define your delegation criteria", desc: "For each process, write one sentence: 'This is ready to hand off when ___.' That sentence is what keeps you from being the permanent bottleneck on things you've already built systems for." }
     ],
-    cta: "Plug into a complete done-for-you Solo Founder OS and finally step into full CEO mode — without rebuilding from scratch."
+    cta: "Your starter kit gives you the exact frameworks to find and fix your highest-leverage bottleneck — so you can finally step back without things breaking."
   }
 };
 
@@ -883,6 +990,15 @@ function showResults() {
     badge.style.color = secArch.color;
     badge.style.borderColor = secArch.color;
     badge.style.background = secArch.colorLight;
+
+    const panelImg = document.getElementById('secondary-panel-img');
+    panelImg.style.background = secArch.colorLight;
+    panelImg.innerHTML = `<img src="${secArch.img}" alt="${secArch.imgAlt}" onerror="this.style.display='none'" />`;
+
+    document.getElementById('secondary-panel-name').textContent = secArch.name;
+    document.getElementById('secondary-panel-name').style.color = secArch.color;
+    document.getElementById('secondary-panel-tagline').textContent = secArch.tagline;
+
     document.getElementById('secondary-flavor-wrap').classList.remove('section-hidden');
   }
 
@@ -900,25 +1016,53 @@ function showResults() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function submitLead() {
+function toggleSecondary() {
+  const wrap = document.getElementById('secondary-flavor-wrap');
+  const panel = document.getElementById('secondary-panel');
+  wrap.classList.toggle('open');
+  panel.classList.toggle('open');
+}
+
+async function submitLead() {
   const name = document.getElementById('lead-name').value.trim();
   const email = document.getElementById('lead-email').value.trim();
   if (!email) { alert('Drop your email so we know where to send it!'); return; }
+
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
+
   const btn = document.querySelector('.cta-btn');
-  btn.textContent = '✓ You\'re in! Check your inbox.';
-  btn.style.opacity = '0.7';
+  btn.textContent = 'Sending…';
   btn.disabled = true;
-  console.log('Lead captured:', { name, email, archetype: arch.name });
+
+  try {
+    const res = await fetch('https://subscribe-forms.beehiiv.com/b6b7e71a-856e-471f-80f0-1554e1bf3884', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        first_name: name,
+        utm_source: 'solo-founder-quiz',
+        utm_medium: 'quiz',
+        utm_campaign: arch.name.toLowerCase().replace(/\s+/g, '-')
+      })
+    });
+
+    btn.textContent = '✓ Check your inbox!';
+    btn.style.opacity = '0.7';
+  } catch (e) {
+    btn.textContent = 'Send me the Solo Founder OS Starter Kit →';
+    btn.disabled = false;
+    alert('Something went wrong — please try again.');
+  }
 }
 
 function copyResult() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const text = `I'm ${arch.name} ${arch.emoji}\n\n"${arch.tagline}"\n\nFind your solo founder archetype →`;
+  const text = `I'm ${arch.name}\n\n"${arch.tagline}"\n\nFind your solo founder archetype →`;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector('.share-btn');
     btn.textContent = '✓ Copied!';
@@ -930,7 +1074,7 @@ function shareToLinkedIn() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const text = encodeURIComponent(`Just took this solo founder quiz and I'm ${arch.name} ${arch.emoji} — "${arch.tagline}" What's your type?`);
+  const text = encodeURIComponent(`Just took this solo founder quiz and I'm ${arch.name} — "${arch.tagline}" What's your type?`);
   window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${text}`, '_blank');
 }
 
@@ -940,6 +1084,8 @@ function retake() {
   current = 0;
   document.getElementById('quiz-section').classList.remove('section-hidden');
   document.getElementById('results-section').classList.add('section-hidden');
+  document.getElementById('secondary-flavor-wrap').classList.add('section-hidden');
+  document.getElementById('secondary-panel').classList.remove('open');
   document.getElementById('hero-section').style.display = '';
   document.querySelector('.quiz-wrap').style.paddingTop = '40px';
   renderQuestion();
