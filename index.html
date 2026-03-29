@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Type of Solo Founder Are You?</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --chaos: #FF6B35;
+    --chaos-light: #FFF0EB;
+    --visionary: #7B5CF0;
+    --visionary-light: #F0EEFF;
+    --reluctant: #2AB07A;
+    --reluctant-light: #E8FFF5;
+    --systems: #F59E0B;
+    --systems-light: #FFFBEB;
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --text: #1A1A18;
+    --text-muted: #6B6B63;
+    --text-hint: #9E9E94;
+    --border: rgba(26,26,24,0.1);
+    --border-strong: rgba(26,26,24,0.18);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    background: var(--text);
+    color: #FAFAF8;
+    padding: 64px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(123,92,240,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, #ff3131, #ff914d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    max-width: 480px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+  .quiz-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--text);
+    border-radius: 99px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--text-hint);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px;
+    animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(18px, 3vw, 24px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 28px;
+    letter-spacing: -0.01em;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: var(--surface);
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .option:hover {
+    border-color: var(--text);
+    background: #F5F5F0;
+    transform: translateX(3px);
+  }
+
+  .option.selected {
+    border-color: var(--text);
+    background: var(--text);
+    color: #FAFAF8;
+  }
+
+  .option-letter {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.18s;
+  }
+
+  .option.selected .option-letter {
+    background: rgba(255,255,255,0.15);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .option-text { flex: 1; }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+  }
+
+  .btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-strong);
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+  }
+
+  .btn-ghost:hover { background: var(--border); color: var(--text); }
+
+  .btn-primary {
+    background: var(--text);
+    color: #FAFAF8;
+    border-color: var(--text);
+  }
+
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  .section-hidden { display: none !important; }
+
+  .result-hero {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: slideIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .result-cat {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 20px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .result-cat img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .result-cat .cat-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-hint);
+    font-weight: 400;
+    border-radius: 24px;
+    border: 1.5px dashed var(--border-strong);
+  }
+
+  .result-cat .cat-placeholder .placeholder-icon {
+    font-size: 32px;
+  }
+
+  .result-type-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 8px;
+  }
+
+  .result-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .result-tagline {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .result-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .result-card-title::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .quick-wins {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .quick-win {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .win-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .win-text { font-size: 15px; line-height: 1.55; }
+  .win-text strong { font-weight: 500; }
+
+  .cta-card {
+    border-radius: var(--radius);
+    padding: 36px;
+    text-align: center;
+    margin-top: 32px;
+    position: relative;
+    overflow: hidden;
+    background: var(--text);
+    color: #FAFAF8;
+  }
+
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 100% at 50% 120%, rgba(123,92,240,0.4) 0%, transparent 70%);
+  }
+
+  .cta-content { position: relative; z-index: 1; }
+
+  .cta-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .cta-card p {
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    font-weight: 300;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: #FAFAF8;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 16px 36px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.18s;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    border: none;
+  }
+
+  .cta-btn:hover { transform: translateY(-2px); opacity: 0.92; }
+
+  .lead-form { margin-top: 20px; }
+
+  .lead-form p {
+    color: rgba(255,255,255,0.45);
+    font-size: 12px;
+    margin-top: 12px;
+    font-weight: 300;
+  }
+
+  .lead-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 360px;
+    margin: 0 auto 16px;
+  }
+
+  .lead-input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: #FAFAF8;
+    width: 100%;
+    transition: border-color 0.18s;
+    outline: none;
+  }
+
+  .lead-input::placeholder { color: rgba(255,255,255,0.35); }
+  .lead-input:focus { border-color: rgba(255,255,255,0.5); }
+
+  .secondary-flavor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .flavor-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .share-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .share-btn:hover { background: var(--text); color: #fff; }
+
+  .retake-btn {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    cursor: pointer;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+  }
+
+  .retake-btn:hover { color: var(--text); }
+
+  @media (max-width: 520px) {
+    .question-card { padding: 24px 20px; }
+    .hero { padding: 48px 20px 44px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="hero-section" class="hero">
+  <div class="hero-tag">Solo Founder Quiz</div>
+  <h1>What kind of <span>solo founder</span> are you?</h1>
+  <p class="hero-sub">8 questions. 2 minutes. Get your founder archetype + a custom tip to reclaim your time and sanity.</p>
+  <div class="hero-meta">
+    <span>⚡ 2 min</span>
+    <span>· · ·</span>
+    <span>8 questions</span>
+    <span>· · ·</span>
+    <span>4 archetypes</span>
+  </div>
+</div>
+
+<div class="quiz-wrap">
+
+  <!-- QUIZ SECTION -->
+  <div id="quiz-section">
+    <div class="progress-bar-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="progress-label" id="progress-label">0 / 8</div>
+    </div>
+
+    <div class="question-card" id="question-card">
+      <div class="q-number" id="q-number">Question 1 of 8</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options-list"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="btn-back" onclick="goBack()" style="display:none">← Back</button>
+      <div></div>
+      <button class="btn btn-primary" id="btn-next" onclick="goNext()" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div id="results-section" class="section-hidden">
+    <div class="result-hero">
+      <div class="result-cat" id="result-cat"></div>
+      <div class="result-type-label">Your founder archetype</div>
+      <div class="result-name" id="result-name"></div>
+      <div class="result-tagline" id="result-tagline"></div>
+    </div>
+
+    <div id="secondary-flavor-wrap" class="secondary-flavor section-hidden">
+      <span>Also with</span>
+      <span class="flavor-badge" id="secondary-badge"></span>
+      <span id="secondary-text"></span>
+      <span>tendencies</span>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">Your instant value tip</div>
+      <div id="result-tip" style="font-size:15px; line-height:1.6; color: var(--text-muted);"></div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-card-title">3 quick wins for you</div>
+      <div class="quick-wins" id="result-wins"></div>
+    </div>
+
+    <div class="cta-card">
+      <div class="cta-content">
+        <h3 id="cta-headline">Ready to stop winging it?</h3>
+        <p id="cta-body"></p>
+        <div class="lead-form">
+          <div class="lead-inputs">
+            <input class="lead-input" type="text" id="lead-name" placeholder="Your first name" />
+            <input class="lead-input" type="email" id="lead-email" placeholder="Your email address" />
+          </div>
+          <button class="cta-btn" onclick="submitLead()">Send me the Solo Founder OS Starter Kit →</button>
+          <p>No spam. Just your personalized starter kit + an invite to the DFY offer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-row">
+      <button class="share-btn" onclick="copyResult()">Copy result</button>
+      <button class="share-btn" onclick="shareToLinkedIn()">Share on LinkedIn</button>
+    </div>
+
+    <button class="retake-btn" onclick="retake()">↩ Retake quiz</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "It's Monday morning. Your to-do list looks like…",
+    options: [
+      { text: "25 urgent things, 3 of which are actually important", type: "C" },
+      { text: "5 exciting new ideas + 'figure out the rest later'", type: "V" },
+      { text: "The same tasks from last week… and the week before", type: "R" },
+      { text: "A neat, prioritized list with deadlines", type: "S" }
+    ]
+  },
+  {
+    text: "When a client asks for something 'quick,' you…",
+    options: [
+      { text: "Say yes immediately and figure out how later", type: "C" },
+      { text: "Get inspired and turn it into a whole new offering", type: "V" },
+      { text: "Do it yourself because delegating feels harder", type: "R" },
+      { text: "Have a clear process and template ready", type: "S" }
+    ]
+  },
+  {
+    text: "Your biggest daily struggle is…",
+    options: [
+      { text: "Everything feels urgent and nothing gets finished", type: "C" },
+      { text: "Too many ideas, not enough time to chase them all", type: "V" },
+      { text: "Feeling trapped doing $20/hour tasks in my own business", type: "R" },
+      { text: "Things break when I step away for even a day", type: "S" }
+    ]
+  },
+  {
+    text: "Your Notion / Google Drive / Desktop situation is best described as…",
+    options: [
+      { text: "Beautiful chaos with 47 open tabs", type: "C" },
+      { text: "Full of vision boards and half-built systems", type: "V" },
+      { text: "A graveyard of 'I'll organize this later' folders", type: "R" },
+      { text: "Clean, color-coded, and actually useful", type: "S" }
+    ]
+  },
+  {
+    text: "If your business was a vehicle, it would be…",
+    options: [
+      { text: "A speeding clown car with no brakes", type: "C" },
+      { text: "A rocket ship that keeps changing direction mid-flight", type: "V" },
+      { text: "A reliable but boring minivan you're stuck driving", type: "R" },
+      { text: "A well-tuned Tesla on autopilot (but you still watch it constantly)", type: "S" }
+    ]
+  },
+  {
+    text: "How do you feel about routines and processes?",
+    options: [
+      { text: "They kill my creativity… until things fall apart", type: "C" },
+      { text: "Boring! I prefer to wing it with inspiration", type: "V" },
+      { text: "I know I need them but never stick to them", type: "R" },
+      { text: "Love them — when they actually save me time", type: "S" }
+    ]
+  },
+  {
+    text: "At the end of a great week, you feel…",
+    options: [
+      { text: "Exhausted but proud you survived the whirlwind", type: "C" },
+      { text: "Pumped about the 3 new directions you're exploring", type: "V" },
+      { text: "Relieved the business didn't collapse without you", type: "R" },
+      { text: "Energized because the machine is finally running smoother", type: "S" }
+    ]
+  },
+  {
+    text: "Your dream for the business in 12 months is…",
+    options: [
+      { text: "Finally feeling in control instead of reactive", type: "C" },
+      { text: "Having multiple revenue streams from my big ideas", type: "V" },
+      { text: "Working way fewer hours while making more money", type: "R" },
+      { text: "Scaling without becoming the bottleneck", type: "S" }
+    ]
+  }
+];
+
+const archetypes = {
+  C: {
+    name: "The Chaos Coordinator",
+    img: "chaos-coordinator.png",
+    imgAlt: "Chaos Coordinator character",
+    color: "#FF6B35",
+    colorLight: "#FFF0EB",
+    tagline: "You're wearing 47 hats and thriving on adrenaline… until you're not. Your business runs on vibes and Notion tabs.",
+    tip: "Try the <strong>One-Page OS Reset</strong> — every Sunday, write down your 3 non-negotiable priorities for the week. Not 25. Three. Pin it somewhere visible. Then before you start any new fire drill, ask: does this move one of those 3 forward?",
+    wins: [
+      { label: "The 2-minute triage rule", desc: "When something lands in your inbox, immediately label it: Do now / Do later / Delegate / Delete. Stop letting everything feel equally urgent." },
+      { label: "One Notion page for everything", desc: "Create a single 'Daily HQ' page. Morning brain dump lives here. End-of-day done list lives here. No more hunting across 47 tabs." },
+      { label: "The 'Not Today' list", desc: "Keep a running doc of good ideas you're NOT doing this week. It frees up mental RAM instantly." }
+    ],
+    cta: "Imagine handing the chaos to a done-for-you system — so you can focus on the work you actually love."
+  },
+  V: {
+    name: "The Visionary Wanderer",
+    img: "visionary-wanderer.png",
+    imgAlt: "Visionary Wanderer character",
+    color: "#7B5CF0",
+    colorLight: "#F0EEFF",
+    tagline: "Big ideas, shiny objects, genius-level creativity… but follow-through and operations? Mostly optional.",
+    tip: "Before chasing any new idea, run it through your <strong>Idea-to-Execution Filter</strong>: (1) Does this make me money in the next 30 days? (2) Does this serve my existing audience? (3) Can I test it in under 5 hours? If it fails 2 of 3, park it.",
+    wins: [
+      { label: "The one-offer rule (for now)", desc: "Pick your single best offer and commit to it for 30 days. No new ideas until you've gotten 3 clients or proven it doesn't work." },
+      { label: "Weekly idea parking lot", desc: "Keep one doc just for ideas. Write them down, set a bi-weekly review date. Scratch the itch without derailing your week." },
+      { label: "Find an accountability anchor", desc: "One person who asks you every Friday: 'What did you finish this week?' Accountability to another human beats any app." }
+    ],
+    cta: "Lock your vision into a repeatable OS without losing the magic — a done-for-you system that thinks like you."
+  },
+  R: {
+    name: "The Reluctant Operator",
+    img: "reluctant-operator.png",
+    imgAlt: "Reluctant Operator character",
+    color: "#2AB07A",
+    colorLight: "#E8FFF5",
+    tagline: "You started the business to escape the 9-5… now you're accidentally running a job with worse hours.",
+    tip: "Do a <strong>Freedom Audit</strong> this week: track every task you do for 3 days. Then label each one: Owner (only you can do this) or Employee (could be systematized or handed off). If less than 50% is Owner work, that's your bottleneck.",
+    wins: [
+      { label: "Find your 3 most-repeated tasks", desc: "What do you do every week without fail? Those 3 things need a template or a system. Build it once, use it forever." },
+      { label: "Ruthlessly cut client access", desc: "No same-day replies. Batch your email to twice a day. Your nervous system will thank you and clients will adjust." },
+      { label: "Define your 'CEO hours'", desc: "Block 2 hours a week that are ONLY for working ON the business, not in it. Treat it like a client meeting you can't cancel." }
+    ],
+    cta: "Turn your solo business into a true asset that runs smoother — without you grinding through every task yourself."
+  },
+  S: {
+    name: "The Systems Savant",
+    img: "systems-savant.png",
+    imgAlt: "Systems Savant character",
+    color: "#F59E0B",
+    colorLight: "#FFFBEB",
+    tagline: "You've got some processes, but scaling feels clunky and you're still the bottleneck at every critical step.",
+    tip: "Run the <strong>Leverage Checklist</strong>: for each part of your business, ask — is this automated, templated, or delegatable? If the answer to all three is 'no', it's a scaling blocker. Pick the one with the highest frequency and fix it this week.",
+    wins: [
+      { label: "Audit your automations", desc: "List every automation you have. Then list every repetitive task that isn't automated yet. The gap is your next 10 hours of reclaimed time." },
+      { label: "Build your 'CEO dashboard'", desc: "3-5 metrics you check weekly. Revenue, leads in pipeline, tasks completed vs. planned. Visibility = control." },
+      { label: "Define your 'CEO exit criteria'", desc: "What needs to be true before you step back from a process? Document it. That's your delegation roadmap." }
+    ],
+    cta: "Plug into a complete done-for-you Solo Founder OS and finally step into full CEO mode — without rebuilding from scratch."
+  }
+};
+
+const names = { C: "Chaos Coordinator", V: "Visionary Wanderer", R: "Reluctant Operator", S: "Systems Savant" };
+
+let scores = { C: 0, V: 0, R: 0, S: 0 };
+let answers = new Array(questions.length).fill(null);
+let current = 0;
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('q-number').textContent = `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('q-text').textContent = q.text;
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (answers[current] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text">${opt.text}</span>`;
+    btn.onclick = () => selectOption(i);
+    list.appendChild(btn);
+  });
+
+  const pct = (current / questions.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${current} / ${questions.length}`;
+
+  document.getElementById('btn-back').style.display = current > 0 ? 'inline-flex' : 'none';
+  document.getElementById('btn-next').disabled = answers[current] === null;
+  document.getElementById('btn-next').textContent = current === questions.length - 1 ? 'See my results →' : 'Next →';
+
+  document.getElementById('question-card').style.animation = 'none';
+  requestAnimationFrame(() => { document.getElementById('question-card').style.animation = ''; });
+}
+
+function selectOption(i) {
+  answers[current] = i;
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  document.getElementById('btn-next').disabled = false;
+}
+
+function goNext() {
+  if (answers[current] === null) return;
+  scores[questions[current].options[answers[current]].type]++;
+
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function goBack() {
+  if (current > 0) {
+    if (answers[current] !== null) {
+      scores[questions[current].options[answers[current]].type]--;
+    }
+    current--;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-section').classList.add('section-hidden');
+  document.getElementById('results-section').classList.remove('section-hidden');
+  document.getElementById('hero-section').style.display = 'none';
+  document.querySelector('.quiz-wrap').style.paddingTop = '48px';
+
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const primary = sorted[0][0];
+  const secondary = sorted[1][0];
+  const arch = archetypes[primary];
+
+  const catEl = document.getElementById('result-cat');
+  catEl.style.background = arch.colorLight;
+  catEl.innerHTML = `<img src="${arch.img}" alt="${arch.imgAlt}" onerror="this.parentElement.innerHTML='<div class=\\'cat-placeholder\\'><span class=\\'placeholder-icon\\'>🐱</span><span>Add your PNG here:<br>${arch.img}</span></div>'" />`;
+  document.getElementById('result-name').textContent = arch.name;
+  document.getElementById('result-name').style.color = arch.color;
+  document.getElementById('result-tagline').textContent = arch.tagline;
+  document.getElementById('result-tip').innerHTML = arch.tip;
+
+  if (secondary && scores[secondary] > 0 && secondary !== primary) {
+    const secArch = archetypes[secondary];
+    const badge = document.getElementById('secondary-badge');
+    badge.textContent = names[secondary];
+    badge.style.color = secArch.color;
+    badge.style.borderColor = secArch.color;
+    badge.style.background = secArch.colorLight;
+    document.getElementById('secondary-flavor-wrap').classList.remove('section-hidden');
+  }
+
+  const winsEl = document.getElementById('result-wins');
+  winsEl.innerHTML = '';
+  arch.wins.forEach((w, i) => {
+    winsEl.innerHTML += `
+      <div class="quick-win">
+        <div class="win-num">${i + 1}</div>
+        <div class="win-text"><strong>${w.label}</strong> — ${w.desc}</div>
+      </div>`;
+  });
+
+  document.getElementById('cta-body').textContent = arch.cta;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitLead() {
+  const name = document.getElementById('lead-name').value.trim();
+  const email = document.getElementById('lead-email').value.trim();
+  if (!email) { alert('Drop your email so we know where to send it!'); return; }
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const primary = sorted[0][0];
+  const arch = archetypes[primary];
+  const btn = document.querySelector('.cta-btn');
+  btn.textContent = '✓ You\'re in! Check your inbox.';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+  console.log('Lead captured:', { name, email, archetype: arch.name });
+}
+
+function copyResult() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const primary = sorted[0][0];
+  const arch = archetypes[primary];
+  const text = `I'm ${arch.name} ${arch.emoji}\n\n"${arch.tagline}"\n\nFind your solo founder archetype →`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.share-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy result', 1500);
+  });
+}
+
+function shareToLinkedIn() {
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const primary = sorted[0][0];
+  const arch = archetypes[primary];
+  const text = encodeURIComponent(`Just took this solo founder quiz and I'm ${arch.name} ${arch.emoji} — "${arch.tagline}" What's your type?`);
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${text}`, '_blank');
+}
+
+function retake() {
+  scores = { C: 0, V: 0, R: 0, S: 0 };
+  answers = new Array(questions.length).fill(null);
+  current = 0;
+  document.getElementById('quiz-section').classList.remove('section-hidden');
+  document.getElementById('results-section').classList.add('section-hidden');
+  document.getElementById('hero-section').style.display = '';
+  document.querySelector('.quiz-wrap').style.paddingTop = '40px';
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
