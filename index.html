@@ -638,8 +638,6 @@
     .hero { padding: 48px 20px 44px; }
   }
 </style>
-<script type="text/javascript" async src="https://subscribe-forms.beehiiv.com/attribution.js"></script>
-<script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
 </head>
 <body>
 
@@ -727,14 +725,6 @@
           <button class="cta-btn" onclick="submitLead()">Send me the Solo Founder OS Starter Kit →</button>
           <p>No spam. Just your starter kit.</p>
         </div>
-        <iframe id="beehiiv-hidden" name="beehiiv-hidden" style="display:none"></iframe>
-        <form id="beehiiv-form" action="https://subscribe-forms.beehiiv.com/b6b7e71a-856e-471f-80f0-1554e1bf3884" method="POST" target="beehiiv-hidden" style="display:none">
-          <input type="hidden" name="email" id="bh-email" />
-          <input type="hidden" name="first_name" id="bh-name" />
-          <input type="hidden" name="utm_source" value="solo-founder-quiz" />
-          <input type="hidden" name="utm_medium" value="quiz" />
-          <input type="hidden" name="utm_campaign" id="bh-campaign" />
-        </form>
       </div>
     </div>
 
@@ -1039,7 +1029,7 @@ function toggleSecondary() {
   panel.classList.toggle('open');
 }
 
-function submitLead() {
+async function submitLead() {
   const name = document.getElementById('lead-name').value.trim();
   const email = document.getElementById('lead-email').value.trim();
   if (!email) { alert('Drop your email so we know where to send it!'); return; }
@@ -1048,15 +1038,32 @@ function submitLead() {
   const primary = sorted[0][0];
   const arch = archetypes[primary];
 
-  document.getElementById('bh-email').value = email;
-  document.getElementById('bh-name').value = name;
-  document.getElementById('bh-campaign').value = arch.name.toLowerCase().replace(/\s+/g, '-');
-  document.getElementById('beehiiv-form').submit();
-
   const btn = document.querySelector('.cta-btn');
-  btn.textContent = '✓ Check your inbox!';
-  btn.style.opacity = '0.7';
+  btn.textContent = 'Sending…';
   btn.disabled = true;
+
+  try {
+    const res = await fetch('https://beehiiv-proxy.kate2workdn.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        first_name: name,
+        utm_campaign: arch.name.toLowerCase().replace(/\s+/g, '-')
+      })
+    });
+
+    if (res.ok) {
+      btn.textContent = '✓ Check your inbox!';
+      btn.style.opacity = '0.7';
+    } else {
+      throw new Error('Bad response');
+    }
+  } catch (e) {
+    btn.textContent = 'Send me the Solo Founder OS Starter Kit →';
+    btn.disabled = false;
+    alert('Something went wrong — please try again.');
+  }
 }
 
 function copyResult() {
