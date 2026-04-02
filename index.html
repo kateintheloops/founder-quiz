@@ -731,8 +731,10 @@
 
     <div class="share-row">
       <button class="share-btn" onclick="copyResult()">Copy result</button>
+      <button class="share-btn" id="copy-caption-btn" onclick="copyCaption()">Copy caption</button>
       <button class="share-btn" onclick="shareToLinkedIn()">Share on LinkedIn</button>
     </div>
+    <div id="caption-hint" style="display:none; text-align:center; margin-top:10px; font-size:13px; color:var(--text-hint); font-family:'DM Sans',sans-serif;">Caption copied — paste it into the LinkedIn post ✓</div>
 
     <button class="retake-btn" onclick="retake()">↩ Retake quiz</button>
   </div>
@@ -1084,15 +1086,28 @@ function copyResult() {
   });
 }
 
-function shareToLinkedIn() {
+function copyCaption() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
   const url = 'https://founder-type.zonestudios.co';
-  const post = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n${url}`;
+  const caption = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 ${url}`;
+  navigator.clipboard.writeText(caption).then(() => {
+    document.getElementById('caption-hint').style.display = 'block';
+    const btn = document.getElementById('copy-caption-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      btn.textContent = 'Copy caption';
+      document.getElementById('caption-hint').style.display = 'none';
+    }, 2500);
+  });
+}
+
+function shareToLinkedIn() {
+  const url = 'https://founder-type.zonestudios.co';
   const existing = window._liPopup;
   if (existing && !existing.closed) { existing.focus(); return; }
-  window._liPopup = window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(post), '_blank', 'noopener,noreferrer');
+  window._liPopup = window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'noopener,noreferrer');
 }
 
 function retake() {
