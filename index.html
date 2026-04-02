@@ -7,11 +7,12 @@
 <meta property="og:title" content="What Type of Solo Founder Are You?" />
 <meta property="og:description" content="8 questions. 2 minutes. Find your founder archetype + get a custom tip to reclaim your time and sanity." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="og-preview.png" />
+<meta property="og:url" content="https://founder-type.zonestudios.co" />
+<meta property="og:image" content="https://founder-type.zonestudios.co/og-preview.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="What Type of Solo Founder Are You?" />
 <meta name="twitter:description" content="8 questions. 2 minutes. Find your founder archetype + get a custom tip to reclaim your time and sanity." />
-<meta name="twitter:image" content="og-preview.png" />
+<meta name="twitter:image" content="https://founder-type.zonestudios.co/og-preview.png" />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1087,11 +1088,12 @@ function shareToLinkedIn() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const url = window.location.href.split('?')[0];
-  const post = `Just found out I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-minute solo founder quiz and honestly… accurate. What type are you? 👇\n\n${url}`;
+  const url = 'https://founder-type.zonestudios.co';
+  const post = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n${url}`;
   const liUrl = 'https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(post);
-  const w = window.open(liUrl, 'linkedin-share', 'width=600,height=600,noopener');
-  if (!w) window.location.href = liUrl;
+  const existing = window._liPopup;
+  if (existing && !existing.closed) { existing.focus(); return; }
+  window._liPopup = window.open(liUrl, '_blank', 'noopener,noreferrer');
 }
 
 function retake() {
