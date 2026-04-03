@@ -638,6 +638,14 @@
     .question-card { padding: 24px 20px; }
     .hero { padding: 48px 20px 44px; }
   }
+
+  @media print {
+    #hero-section, #quiz-section, .share-row, .retake-btn, .cta-card { display: none !important; }
+    body { background: #fff; }
+    .quiz-wrap { padding: 20px; }
+    .result-card { border: 1px solid #ddd; break-inside: avoid; }
+    .secondary-panel { display: block !important; }
+  }
 </style>
 </head>
 <body>
@@ -730,11 +738,9 @@
     </div>
 
     <div class="share-row">
-      <button class="share-btn" onclick="copyResult()">Copy result</button>
-      <button class="share-btn" id="copy-caption-btn" onclick="copyCaption()">Copy caption</button>
+      <button class="share-btn" onclick="saveResults()">Save results</button>
       <button class="share-btn" onclick="shareToLinkedIn()">Share on LinkedIn</button>
     </div>
-    <div id="caption-hint" style="display:none; text-align:center; margin-top:10px; font-size:13px; color:var(--text-hint); font-family:'DM Sans',sans-serif;">Caption copied — paste it into the LinkedIn post ✓</div>
 
     <button class="retake-btn" onclick="retake()">↩ Retake quiz</button>
   </div>
@@ -1074,37 +1080,23 @@ async function submitLead() {
   }
 }
 
-function copyResult() {
+function saveResults() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const text = `I'm ${arch.name}\n\n"${arch.tagline}"\n\nFind your solo founder archetype →`;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector('.share-btn');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = 'Copy result', 1500);
-  });
+  const originalTitle = document.title;
+  document.title = `My Founder Type: ${arch.name}`;
+  window.print();
+  document.title = originalTitle;
 }
 
-function copyCaption() {
+function shareToLinkedIn() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
   const url = 'https://founder-type.zonestudios.co';
   const caption = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 ${url}`;
-  navigator.clipboard.writeText(caption).then(() => {
-    document.getElementById('caption-hint').style.display = 'block';
-    const btn = document.getElementById('copy-caption-btn');
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => {
-      btn.textContent = 'Copy caption';
-      document.getElementById('caption-hint').style.display = 'none';
-    }, 2500);
-  });
-}
-
-function shareToLinkedIn() {
-  const url = 'https://founder-type.zonestudios.co';
+  navigator.clipboard.writeText(caption).catch(() => {});
   const existing = window._liPopup;
   if (existing && !existing.closed) { existing.focus(); return; }
   window._liPopup = window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'noopener,noreferrer');
