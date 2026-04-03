@@ -1094,10 +1094,14 @@ function shareToLinkedIn() {
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const primary = sorted[0][0];
   const arch = archetypes[primary];
-  const post = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 founder-type.zonestudios.co`;
+  const caption = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 founder-type.zonestudios.co`;
+  navigator.clipboard.writeText(caption);
+  const btn = document.querySelector('.share-btn:last-child');
+  btn.textContent = '✓ Caption copied — now paste on LinkedIn';
+  setTimeout(() => btn.textContent = 'Share on LinkedIn', 3500);
   const existing = window._liPopup;
   if (existing && !existing.closed) { existing.focus(); return; }
-  window._liPopup = window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(post), '_blank', 'noopener,noreferrer');
+  window._liPopup = window.open('https://www.linkedin.com/feed/?shareActive=true', '_blank', 'noopener,noreferrer');
 }
 
 function retake() {
