@@ -1095,11 +1095,10 @@ function shareToLinkedIn() {
   const primary = sorted[0][0];
   const arch = archetypes[primary];
   const url = 'https://founder-type.zonestudios.co';
-  const caption = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 ${url}`;
-  navigator.clipboard.writeText(caption).catch(() => {});
+  const post = `I'm ${arch.name} 👀\n\n"${arch.tagline}"\n\nTook this 2-min quiz and… yeah. What's your type?\n\n👉 ${url}`;
   const existing = window._liPopup;
   if (existing && !existing.closed) { existing.focus(); return; }
-  window._liPopup = window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'noopener,noreferrer');
+  window._liPopup = window.open('https://www.linkedin.com/feed/?shareActive=true&text=' + encodeURIComponent(post), '_blank', 'noopener,noreferrer');
 }
 
 function retake() {
